@@ -1,0 +1,14 @@
+{% include 'header.html' %}
+
+<!-- index -->
+
+<p><a href="/twitore/create_collection">Create Collection</a></p>
+
+<p>Current Collections:</p>
+<ul>
+	{% for c in collections %}
+		<li>{{c.name}} / <a href="/twitore/delete_collection/{{c.name}}">delete</a> / <a href="/twitore/search/{{c.name}}">search</a></li>
+	{% endfor %}
+</ul>
+
+

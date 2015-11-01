@@ -11,7 +11,7 @@ from mongoengine import DoesNotExist
 # local
 import localConfig
 from localConfig import logging
-from twitore_app import app, models
+from twitore_app import app, models, mycron
 import utils
 
 
@@ -31,11 +31,22 @@ def jobs():
 	return render_template('jobs.html',jobs=jobs)
 
 
+# route for performing search, HTTP trigger for work
+@app.route("{prefix}".format(prefix=localConfig.twitore_app_prefix), methods=['GET', 'POST'])
+def index():
+
+	collections = models.Collection.objects()
+
+	return render_template('index.html',collections=collections)
 
 
 # route for performing search, HTTP trigger for work
 @app.route("{prefix}/search/<collection>".format(prefix=localConfig.twitore_app_prefix), methods=['GET', 'POST'])
 def search(collection):
+
+	'''
+	Consider pushing to worker queue (celery, rq, etc.)
+	'''
 
 	logging.info("Performing search for %s" % collection)
 	
@@ -69,21 +80,28 @@ def create_collection():
 		logging.debug(request.form)
 
 		# create collection
-		'''
-		Need error checking here, if collection already exists, prevent from creating another
-		'''
+		collection = request.form['name']
 
 		# check for collection name
+		try:
+			c = models.Collection.objects.get(name=collection)        
+			return jsonify({'status':False})
+		except DoesNotExist:
+			logging.debug("collection does not exist, continuing")
 
+			c = models.Collection()
+			c.name = request.form['name']
+			c.search_terms = request.form['search_terms'].split(",")
+			c.minute_frequency = int(request.form['minute_frequency'])
+			c.save()
+			logging.debug("created collection %s" % c.id)
 
+			# set cron job
+			job = mycron.new(comment="twitore_%s" % collection, command="curl localhost:5001/twitore/search/%s" % collection)
+			job.minute.every(c.minute_frequency)
+			mycron.write()
 
-		c = models.Collection()
-		c.name = request.form['name']
-		c.search_terms = request.form['search_terms'].split(",")
-		c.save()
-		logging.debug("created collection %s" % c.id)
-
-		return str(c.id)
+			return str(c.id)
 
 
 # route for performing search, HTTP trigger for work
@@ -102,7 +120,18 @@ def delete_collection(collection):
 	models.Collection.delete(c)
 	'''
 	Consider removing archived tweets from filesystem?
-	'''
+	Consider removing archived tweets from monogodb?
+	'''	
+
+	# remove from crontab
+	cron = list(mycron.find_comment('twitore_%s' % collection))
+	logging.debug(cron)
+	if len(cron) == 1:
+		mycron.remove(cron[0])
+		mycron.write()
+
+
+	# if all goes well...
 	return jsonify({'status':True})
 
 

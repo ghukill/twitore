@@ -65,7 +65,7 @@ def search_and_archive(collection, search_terms, archive_dir):
 
     # we only create the file if there are new tweets to save 
     # this prevents empty archive files
-    fh = None 
+    fh = None
 
     archive_log = []
     for tweet in tweets:

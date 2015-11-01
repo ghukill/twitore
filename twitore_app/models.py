@@ -3,6 +3,8 @@
 import json
 import datetime 
 
+import localConfig
+
 # mongo
 from mongoengine import *
 connect('twitore_dev')
@@ -17,5 +19,6 @@ class MongoTweet(DynamicDocument):
 class Collection(DynamicDocument):
 	name = StringField(primary_key=True)
 	search_terms = ListField(StringField())
+	minute_frequency = IntField() # consider adding minimum here
 
 

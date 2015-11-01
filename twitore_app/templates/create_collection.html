@@ -1,7 +1,10 @@
+{% include 'header.html' %}
+
 <!-- create collection -->
 <form action="/twitore/create_collection" method="POST">
 	name: <input type="text" name="name"/><br>
 	search terms: <input type="text" name="search_terms"/><br>
+	minute frequency for searching: <input type="text" name="minute_frequency"/><br>
 	<input type="submit">
 </form>
 	
