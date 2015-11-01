@@ -9,9 +9,6 @@ from twisted.web.server import NOT_DONE_YET
 from twisted.web import server, resource
 from twisted.python import log
 
-# twarc
-from twarc import Twarc
-
 # python modules
 import json
 import logging
@@ -23,11 +20,6 @@ import localConfig
 
 # import crumb_http flask app
 from twitore_app import app
-
-
-# global twarc instance
-t = Twarc(localConfig.client_key, localConfig.client_secret, localConfig.access_token, localConfig.access_token_secret)
-
 
 # betweezered_app
 resource = WSGIResource(reactor, reactor.getThreadPool(), app)

@@ -1,13 +1,16 @@
 # twitore server flask app
 
+# localConfig
+import localConfig
+
 # python
 import flask
-
-# db related
 from flask import Flask, render_template, g
 
-# crumb
-import localConfig
+# twarc
+from twarc import Twarc
+# global twarc instance
+twarc_instance = Twarc(localConfig.client_key, localConfig.client_secret, localConfig.access_token, localConfig.access_token_secret)
 
 # create app
 app = flask.Flask(__name__)

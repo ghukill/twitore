@@ -66,7 +66,7 @@ def search(collection):
 	archive_dir = "/".join([localConfig.archive_directory,c.name])
 	search_terms = ",".join(c.search_terms)
 	logging.debug("Passing %s %s" % (search_terms,archive_dir))
-	utils.search_and_archive(search_terms, archive_dir)
+	archive_log = utils.search_and_archive(collection, search_terms, archive_dir)
+	logging.debug(archive_log)
 
-
-	return jsonify({"status":True})
+	return jsonify({"archive_log":archive_log})
