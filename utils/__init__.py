@@ -117,3 +117,10 @@ def get_next_archive(archive_dir):
     else:
         count = 1
     return os.path.join(archive_dir, archive_file_fmt % count)
+
+
+def retrieveCollection(collection):
+    try:
+        return Collection.objects.get(name=collection)        
+    except DoesNotExist:
+        return False

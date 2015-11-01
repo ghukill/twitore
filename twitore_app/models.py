@@ -15,5 +15,7 @@ class MongoTweet(DynamicDocument):
 
 # Collection
 class Collection(DynamicDocument):
-	name = StringField()
+	name = StringField(primary_key=True)
 	search_terms = ListField(StringField())
+
+
