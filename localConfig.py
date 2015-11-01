@@ -14,3 +14,8 @@ twitore_app_port = 5001
 
 # logging level
 logging.basicConfig(level=logging.DEBUG)
+
+
+# archiving directory (full path)
+archive_directory = "/home/commander/data/twitore"
+

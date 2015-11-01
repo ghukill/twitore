@@ -1,6 +1,5 @@
 twarc
 flask
 twisted
-kafka-python
 pymongo
 mongoengine

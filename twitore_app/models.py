@@ -7,7 +7,13 @@ import datetime
 from mongoengine import *
 connect('twitore_dev')
 
-# MongoDB
+
+# Tweet
 class MongoTweet(DynamicDocument):
 	id = StringField(primary_key=True)
-	collection = StringField()
+
+
+# Collection
+class Collection(DynamicDocument):
+	name = StringField()
+	search_terms = ListField(StringField())

@@ -17,7 +17,6 @@ import json
 import logging
 import time
 import sys
-import threading
 
 # local
 import localConfig
