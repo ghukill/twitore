@@ -1,0 +1,16 @@
+
+<h3>Search Terms:</h3>
+<ul>
+	{% for search_term in renderdict.search_terms %}
+		<li>{{search_term}}</li>
+	{% endfor %}
+</ul>
+<h3>Total tweets: {{renderdict.count}}</h3>
+
+
+<p>Showing: {{renderdict.limit}}</p>
+<ul>
+	{% for tweet in renderdict.tweets %}
+	<li>{{tweet.id}} --> {{tweet.text}}</li>
+	{% endfor %}
+</ul>

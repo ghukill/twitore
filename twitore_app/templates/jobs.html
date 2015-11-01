@@ -1,0 +1,7 @@
+<!-- jobs -->
+
+<ul>
+	{% for job in jobs %}
+		<li><em>{{job.command}}</em> #<strong>{{job.comment}}</strong></li>
+	{% endfor %}
+</ul>
