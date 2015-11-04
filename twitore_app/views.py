@@ -17,28 +17,33 @@ import utils
 
 
 
-@app.route("{prefix}/jobs".format(prefix=localConfig.twitore_app_prefix), methods=['GET', 'POST'])
-def jobs():
+# HTML VIEWS --------------------------------------------------------------------------------- #
 
-	# get crontab for current user
-	mycron = CronTab(user=True)
-
-	# get all jobs
-	jobs = mycron.crons
-	localConfig.logging.debug(jobs)
-
-	#render page
-	return render_template('jobs.html',jobs=jobs)
-
-
-# route for performing search, HTTP trigger for work
+# index
 @app.route("{prefix}".format(prefix=localConfig.twitore_app_prefix), methods=['GET', 'POST'])
 def index():
 
+	return render_template('index.html')
+
+
+# collections
+@app.route("{prefix}/collections".format(prefix=localConfig.twitore_app_prefix), methods=['GET', 'POST'])
+def collections():
+
+	data = []
 	collections = models.Collection.objects()
 
-	return render_template('index.html',collections=collections)
+	for collection in collections:		
+		s = models.MongoTweet.objects().filter(twitore_collection=collection.name)
+		data.append({
+			"count":s.count(),
+			"name":collection.name			
+		})
 
+	return render_template('collections.html', data=data)
+
+
+# API ROUTES --------------------------------------------------------------------------------- #
 
 # route for performing search, HTTP trigger for work
 @app.route("{prefix}/search/<collection>".format(prefix=localConfig.twitore_app_prefix), methods=['GET', 'POST'])
@@ -64,7 +69,6 @@ def search(collection):
 	search_terms = ",".join(c.search_terms)
 	logging.debug("Passing %s %s" % (search_terms,archive_dir))
 	archive_log = utils.search_and_archive(collection, search_terms, archive_dir)
-	logging.debug(archive_log)
 
 	return jsonify({"archive_log":archive_log})
 
@@ -165,3 +169,19 @@ def delete_collection(collection):
 # 	renderdict['search_terms'] = localConfig.search_terms
 
 # 	return render_template('tweets.htm',renderdict=renderdict)
+
+
+
+# # cron
+# @app.route("{prefix}/jobs".format(prefix=localConfig.twitore_app_prefix), methods=['GET', 'POST'])
+# def jobs():
+
+# 	# get crontab for current user
+# 	mycron = CronTab(user=True)
+
+# 	# get all jobs
+# 	jobs = mycron.crons
+# 	localConfig.logging.debug(jobs)
+
+# 	#render page
+# 	return render_template('jobs.html',jobs=jobs)

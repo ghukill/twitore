@@ -1,0 +1,23 @@
+/* local css */
+
+.row {
+	margin:10px 0px 10px 0px;
+}
+
+li {
+	margin-bottom:0px;
+}
+
+.inline ul {
+	list-style-type: none;
+}
+.inline li {
+	display: inline;
+}
+.inline li:before {
+content: " | ";
+}
+
+.inline li:first-child:before {
+content: none;
+}

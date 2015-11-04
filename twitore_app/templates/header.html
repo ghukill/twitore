@@ -1,1 +1,26 @@
-<a href="/twitore">home</a>
+<html>
+	<head>
+		<link rel="stylesheet" href="{{ url_for('static', filename='inc/skeleton/css/normalize.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='inc/skeleton/css/skeleton.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/local.css') }}">
+	</head>
+
+<body>
+	<div class="container">
+
+		<div class="row">
+			<div class="twelve columns">
+				<h2>Twitore</h2>
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="twelve columns">
+				<ul class="inline">
+					<li><a href="/twitore">home</a></li>
+					<li><a href="/twitore/collections">collections</a></li>
+				</ul>
+			</div>
+		</div>
+
+
