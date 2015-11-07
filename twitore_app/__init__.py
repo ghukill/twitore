@@ -22,6 +22,14 @@ app = flask.Flask(__name__)
 # set session key
 app.secret_key = 'twitore_is_the_bomb'
 
-# get handlers
+# Flask/MongoEngine
+from flask.ext.mongoengine import MongoEngine
+app.config['MONGODB_SETTINGS'] = {
+    'db': 'twitore_dev'
+}
+db = MongoEngine(app)
+
+
+# get handlers (should be last)
 import views
 import models

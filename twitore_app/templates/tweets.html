@@ -1,16 +1,65 @@
+{% include 'header.html' %}
 
-<h3>Search Terms:</h3>
-<ul>
-	{% for search_term in renderdict.search_terms %}
-		<li>{{search_term}}</li>
-	{% endfor %}
-</ul>
-<h3>Total tweets: {{renderdict.count}}</h3>
+<div class="row">
+	<div class="twelve columns">
+		<h4>{{data.collection.name}} tweets</h4>
+	</div>
+</div>
+
+<div class="row">
+	<div class="twelve columns">
+
+		<table class="u-full-width">
+			<tr>				
+				<td><strong>user</strong></td>
+				<td><strong>text</strong></td>
+				<td><strong>date</strong></td>
+			</tr>
+
+			{% for tweet in pt.items %}
+				<tr>				
+					<td><img src="{{tweet.user.profile_image_url_https}}"/><br>{{tweet.user.name}}</td>
+					<td><span class="tweet">{{tweet.text}}</span></td>
+					<td>{{tweet.created_at}}</td>
+				</tr>
+			{% endfor %}
+
+		</table>
+
+	</div>
+</div>
 
 
-<p>Showing: {{renderdict.limit}}</p>
-<ul>
-	{% for tweet in renderdict.tweets %}
-	<li>{{tweet.id}} --> {{tweet.text}}</li>
-	{% endfor %}
-</ul>
+<div class="row">
+	<div class="twelve columns">
+
+		<!-- all tweets -->
+		  <div class=pagination>
+		  {%- for page in pt.iter_pages() %}
+		    {% if page %}
+		      {% if page != pt.page %}
+		        <a href="/twitore/collection/{{ data.collection.name }}/tweets/{{ page }}">{{ page }}</a>
+		      {% else %}
+		        <strong>{{ page }}</strong>
+		      {% endif %}
+		    {% else %}
+		      <span class=ellipsis>…</span>
+		    {% endif %}
+		  {%- endfor %}
+		  </div>
+
+	</div>
+</div>
+
+<script type="text/javascript">
+	// convert URLs to links in tweets
+	var tweets = $(".tweet");
+	for (var i = tweets.length - 1; i >= 0; i--) {
+		var tweet = $(tweets[i]);
+		var linkedText = Autolinker.link( tweet.html() );
+		// set new text
+		tweet.html(linkedText);
+	};	
+</script>
+
+{% include 'footer.html' %}

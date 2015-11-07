@@ -175,6 +175,31 @@ def delete_collection(collection):
 	return redirect("{prefix}/collections".format(prefix=localConfig.twitore_app_prefix))
 
 
+# route for all tweets paginated
+@app.route("{prefix}/all_tweets/<int:page>".format(prefix=localConfig.twitore_app_prefix), methods=['GET', 'POST'])
+def all_tweets(page=1):
+
+	pt = models.MongoTweet.objects.paginate(page=page, per_page=10)
+
+	return render_template("tweets.html",pt=pt)
+
+
+# single collection view
+@app.route("{prefix}/collection/<name>/tweets/<int:page>".format(prefix=localConfig.twitore_app_prefix), methods=['GET', 'POST'])
+def collection_tweets(name,page=1):
+
+	c = models.Collection.objects.get(name=name)
+
+	data = {
+		"collection":c
+	}
+
+	pt = models.MongoTweet.objects.filter(twitore_collection=name).paginate(page=page, per_page=10)
+
+	return render_template('tweets.html', data=data, pt=pt)	
+
+
+
 
 # API ROUTES --------------------------------------------------------------------------------- #
 
