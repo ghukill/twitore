@@ -5,7 +5,7 @@ import json
 import time
 
 from crontab import CronTab
-from flask import jsonify, render_template, request
+from flask import jsonify, render_template, request, redirect, url_for
 from mongoengine import DoesNotExist
 
 # local
@@ -30,6 +30,8 @@ def index():
 @app.route("{prefix}/collections".format(prefix=localConfig.twitore_app_prefix), methods=['GET', 'POST'])
 def collections():
 
+	msg={}
+
 	data = []
 	collections = models.Collection.objects()
 
@@ -40,42 +42,30 @@ def collections():
 			"name":collection.name			
 		})
 
-	return render_template('collections.html', data=data)
+	return render_template('collections.html', data=data, msg=msg)
 
 
-# API ROUTES --------------------------------------------------------------------------------- #
+# collection
+@app.route("{prefix}/collection/<name>".format(prefix=localConfig.twitore_app_prefix), methods=['GET', 'POST'])
+def collection(name):
 
-# route for performing search, HTTP trigger for work
-@app.route("{prefix}/search/<collection>".format(prefix=localConfig.twitore_app_prefix), methods=['GET', 'POST'])
-def search(collection):
+	msg = {}
+	data = {}
 
-	'''
-	Consider pushing to worker queue (celery, rq, etc.)
-	'''
+	c = models.Collection.objects.get(name=name)
+	data['collection'] = c
 
-	logging.info("Performing search for %s" % collection)
-	
-	# retrieve collection mongo record
-	try:
-		c = models.Collection.objects.get(name=collection)
-		logging.info("Retrieved %s %s" % (c.name,c.id))
-	except DoesNotExist:
-		logging.info("collection does not exist")
-		return jsonify({"status":False})
+	# stringify search terms
+	data['collection']['search_terms'] = ", ".join(data['collection']['search_terms'])
+
+	return render_template('collection.html', data=data, msg=msg)	
 
 
-	# run search (where collection name is used for )
-	archive_dir = "/".join([localConfig.archive_directory,c.name])
-	search_terms = ",".join(c.search_terms)
-	logging.debug("Passing %s %s" % (search_terms,archive_dir))
-	archive_log = utils.search_and_archive(collection, search_terms, archive_dir)
-
-	return jsonify({"archive_log":archive_log})
-
-
-# route for performing search, HTTP trigger for work
+# route for creating collection
 @app.route("{prefix}/create_collection".format(prefix=localConfig.twitore_app_prefix), methods=['GET', 'POST'])
 def create_collection():
+
+	data = {}
 
 	if request.method =="GET":
 		return render_template("create_collection.html")
@@ -95,7 +85,7 @@ def create_collection():
 
 			c = models.Collection()
 			c.name = request.form['name']
-			c.search_terms = request.form['search_terms'].split(",")
+			c.search_terms = [term.strip() for term in request.form['search_terms'].split(",")]
 			c.minute_frequency = int(request.form['minute_frequency'])
 			c.save()
 			logging.debug("created collection %s" % c.id)
@@ -105,7 +95,54 @@ def create_collection():
 			job.minute.every(c.minute_frequency)
 			mycron.write()
 
-			return str(c.id)
+			return redirect("{prefix}/collections".format(prefix=localConfig.twitore_app_prefix))
+			
+
+
+# route for updating collection
+@app.route("{prefix}/update_collection/<name>".format(prefix=localConfig.twitore_app_prefix), methods=['GET', 'POST'])
+def update_collection(name):
+
+	data = {}
+
+	# assuming POST
+	logging.debug(request.form)	
+
+	# check for collection name
+	try:
+		c = models.Collection.objects.get(name=name)        
+	except DoesNotExist:
+		logging.debug("collection does not exist, continuing")
+		return jsonify({'status':False})
+
+	c.search_terms = [term.strip() for term in request.form['search_terms'].split(",")]
+	c.minute_frequency = int(request.form['minute_frequency'])
+	c.save()
+	logging.debug("updated collection %s" % c.id)
+
+	# update cron job
+	try:
+		job = mycron.find_comment('twitore_{name}'.format(name=name)).next()
+		job.minute.every(c.minute_frequency)
+		mycron.write()
+
+		msg = {
+			"msg_text":"Collection updated!",
+			"msg_type":"msg_success"
+		}
+	except:
+		msg = {
+			"msg_text":"Collection could not be updated.",
+			"msg_type":"msg_alert"
+		}
+
+	# prep for return
+	# stringify search terms
+	data['collection'] = c
+	data['collection']['search_terms'] = ", ".join(data['collection']['search_terms'])
+
+	# conside reworking where not directly rendering the template, but the route instead
+	return render_template('collection.html', data=data, msg=msg)
 
 
 # route for performing search, HTTP trigger for work
@@ -135,8 +172,45 @@ def delete_collection(collection):
 		mycron.write()
 
 
-	# if all goes well...
-	return jsonify({'status':True})
+	# if all goes well...	
+	return redirect("{prefix}/collections".format(prefix=localConfig.twitore_app_prefix))
+
+
+# API ROUTES --------------------------------------------------------------------------------- #
+
+# route for performing search, HTTP trigger for work
+@app.route("{prefix}/search/<collection>".format(prefix=localConfig.twitore_app_prefix), methods=['GET', 'POST'])
+def search(collection):
+
+	'''
+	Consider pushing to worker queue (celery, rq, etc.)
+	'''
+
+	logging.info("Performing search for %s" % collection)
+	
+	# retrieve collection mongo record
+	try:
+		c = models.Collection.objects.get(name=collection)
+		logging.info("Retrieved %s %s" % (c.name,c.id))
+	except DoesNotExist:
+		logging.info("collection does not exist")
+		return jsonify({"status":False})
+
+
+	# run search (where collection name is used for )
+	archive_dir = "/".join([localConfig.archive_directory,c.name])
+	search_terms = ",".join(c.search_terms)
+	logging.debug("Passing %s %s" % (search_terms,archive_dir))
+	archive_log = utils.search_and_archive(collection, search_terms, archive_dir)
+
+
+	return jsonify({"archive_log":archive_log})
+
+
+
+
+
+
 
 
 

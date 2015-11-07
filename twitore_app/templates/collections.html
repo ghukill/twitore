@@ -5,13 +5,28 @@
 	<div class="twelve columns">
 		<p><a href="/twitore/create_collection">Create Collection</a></p>
 
-		<p>Current Collections:
-		<ul>
+		<table class="u-full-width">
+
+			<tr>
+				<td><strong>Collection Name</strong></td>
+				<td><strong>Tweet Count</strong></td>				
+				<td><strong>Actions</strong></td>
+			</tr>		
+
 			{% for c in data %}
-				<li>{{c.name}} ({{c.count}}) / <a href="/twitore/delete_collection/{{c.name}}">delete</a> / <a href="/twitore/search/{{c.name}}">search</a></li>
+				<tr>
+					<td>{{c.name}}</td>
+					<td>{{c.count}}</td>					
+					<td>
+						<ul class="inline">
+							<li><a href="/twitore/collection/{{c.name}}">edit</a></li>
+							<li><a href="/twitore/search/{{c.name}}">fire search</a></li>
+						</ul>
+					</td>
 			{% endfor %}
-		</ul>
-		</p>
+
+		</table>
+
 	</div>
 </div>
 

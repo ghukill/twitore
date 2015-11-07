@@ -1,23 +1,57 @@
 /* local css */
 
-.row {
-	margin:10px 0px 10px 0px;
-}
-
 li {
 	margin-bottom:0px;
 }
 
-.inline ul {
+ul.inline {
 	list-style-type: none;
+	margin: 0px 0px 0px 15px;
 }
+
 .inline li {
-	display: inline;
+	display: inline;	
 }
+
 .inline li:before {
-content: " | ";
+	content: " | ";
 }
 
 .inline li:first-child:before {
-content: none;
+	content: none;
+}
+
+#nav_menu ul {
+	margin-left:0px;
+}
+
+#title {
+	margin-bottom:0px;	
+}
+
+#title a {
+	text-decoration: none;
+	color: #222;
+}
+
+
+/* messages */
+#msg {
+	border-radius: 7px;
+	margin:15px 15px 15px 15px;
+	display: table; 
+}
+
+#msg_text {
+	display: table-cell; 
+  	vertical-align: middle; 
+  	text-align: center; 
+  	padding:10px;
+}
+
+.msg_success {
+	background-color: #C2E8C2;
+}
+.msg_alert {
+	background-color: #FFFFC5;
 }

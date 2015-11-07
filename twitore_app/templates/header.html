@@ -10,17 +10,26 @@
 
 		<div class="row">
 			<div class="twelve columns">
-				<h2>Twitore</h2>
+				<h2 id="title"><a href="/twitore">Twitore</a></h2>
 			</div>
 		</div>
 		
 		<div class="row">
-			<div class="twelve columns">
-				<ul class="inline">
-					<li><a href="/twitore">home</a></li>
-					<li><a href="/twitore/collections">collections</a></li>
+			<div id="nav_menu" class="twelve columns">
+				<ul class="inline">					
+					<li><a href="/twitore/collections">Collections</a></li>
 				</ul>
 			</div>
 		</div>
+
+		<hr>
+
+		{% if msg %}
+			<div class="row">
+				<div id="msg" class="twelve columns {{msg.msg_type}}">
+					<p id="msg_text">{{msg.msg_text}}</p>
+				</div>
+			</div>
+		{% endif %}
 
 
