@@ -5,7 +5,7 @@ import json
 import time
 
 from crontab import CronTab
-from flask import jsonify, render_template, request, redirect, url_for
+from flask import jsonify, render_template, request, redirect, url_for, session
 from mongoengine import DoesNotExist
 
 # local
@@ -26,11 +26,12 @@ def index():
 	return render_template('index.html')
 
 
-# collections
+# collections view
 @app.route("{prefix}/collections".format(prefix=localConfig.twitore_app_prefix), methods=['GET', 'POST'])
 def collections():
 
-	msg={}
+	# deal with message
+	msg = utils.msgHandle(session)
 
 	data = []
 	collections = models.Collection.objects()
@@ -45,11 +46,13 @@ def collections():
 	return render_template('collections.html', data=data, msg=msg)
 
 
-# collection
+# single collection view
 @app.route("{prefix}/collection/<name>".format(prefix=localConfig.twitore_app_prefix), methods=['GET', 'POST'])
 def collection(name):
 
-	msg = {}
+	# deal with message
+	msg = utils.msgHandle(session)
+
 	data = {}
 
 	c = models.Collection.objects.get(name=name)
@@ -83,20 +86,23 @@ def create_collection():
 		except DoesNotExist:
 			logging.debug("collection does not exist, continuing")
 
-			c = models.Collection()
-			c.name = request.form['name']
-			c.search_terms = [term.strip() for term in request.form['search_terms'].split(",")]
-			c.minute_frequency = int(request.form['minute_frequency'])
-			c.save()
-			logging.debug("created collection %s" % c.id)
 
-			# set cron job
-			job = mycron.new(comment="twitore_%s" % collection, command="curl localhost:5001/twitore/search/%s" % collection)
-			job.minute.every(c.minute_frequency)
-			mycron.write()
+		c = models.Collection()
+		c.name = request.form['name']
+		c.search_terms = [term.strip() for term in request.form['search_terms'].split(",")]
+		c.minute_frequency = int(request.form['minute_frequency'])
+		c.save()
+		logging.debug("created collection %s" % c.id)
 
-			return redirect("{prefix}/collections".format(prefix=localConfig.twitore_app_prefix))
-			
+		# set cron job
+		job = mycron.new(comment="twitore_%s" % collection, command="curl localhost:5001/twitore/search/%s" % collection)
+		job.minute.every(c.minute_frequency)
+		mycron.write()
+
+		# set msg in session		
+		utils.setMsg(session,"collection created","msg_success")
+
+		return redirect("{prefix}/collections".format(prefix=localConfig.twitore_app_prefix))
 
 
 # route for updating collection
@@ -126,26 +132,17 @@ def update_collection(name):
 		job.minute.every(c.minute_frequency)
 		mycron.write()
 
-		msg = {
-			"msg_text":"Collection updated!",
-			"msg_type":"msg_success"
-		}
+		# set msg in session		
+		utils.setMsg(session,"collection updated","msg_success")
+
 	except:
-		msg = {
-			"msg_text":"Collection could not be updated.",
-			"msg_type":"msg_alert"
-		}
+		# set msg in session		
+		utils.setMsg(session,"collection could not be updated","msg_alert")
 
-	# prep for return
-	# stringify search terms
-	data['collection'] = c
-	data['collection']['search_terms'] = ", ".join(data['collection']['search_terms'])
+	return redirect("{prefix}/collection/{name}".format(prefix=localConfig.twitore_app_prefix,name=name))
+	
 
-	# conside reworking where not directly rendering the template, but the route instead
-	return render_template('collection.html', data=data, msg=msg)
-
-
-# route for performing search, HTTP trigger for work
+# route for deleting collection
 @app.route("{prefix}/delete_collection/<collection>".format(prefix=localConfig.twitore_app_prefix), methods=['GET', 'POST'])
 def delete_collection(collection):
 
@@ -171,9 +168,12 @@ def delete_collection(collection):
 		mycron.remove(cron[0])
 		mycron.write()
 
+	# set msg in session		
+	utils.setMsg(session,"collection deleted","msg_success")
 
 	# if all goes well...	
 	return redirect("{prefix}/collections".format(prefix=localConfig.twitore_app_prefix))
+
 
 
 # API ROUTES --------------------------------------------------------------------------------- #

@@ -124,3 +124,26 @@ def retrieveCollection(collection):
         return Collection.objects.get(name=collection)        
     except DoesNotExist:
         return False
+
+
+# function to deal with messages
+def msgHandle(session):
+    if 'msg' in session:
+        msg = session['msg']
+        session.pop('msg',None)
+    else:
+        msg = {}
+
+    return msg
+
+
+# function to set message
+def setMsg(session, msg_text, msg_type):
+    try:
+        session['msg'] = {
+            "msg_text":msg_text,
+            "msg_type":msg_type
+        }
+        return True
+    except:
+        return False

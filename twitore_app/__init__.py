@@ -19,6 +19,9 @@ mycron = CronTab(user=True)
 # create app
 app = flask.Flask(__name__)
 
+# set session key
+app.secret_key = 'twitore_is_the_bomb'
+
 # get handlers
 import views
 import models
