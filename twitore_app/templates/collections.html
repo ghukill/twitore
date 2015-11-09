@@ -3,21 +3,20 @@
 <!-- collections -->
 <div class="row">
 	<div class="twelve columns">
-		<p><a href="/twitore/create_collection">Create Collection</a></p>
 
 		<table class="u-full-width">
 
 			<tr>
 				<td><strong>Collection Name</strong></td>
-				<td><strong>Tweet Count</strong></td>				
-				<td><strong>Actions</strong></td>
+				<td class="text_center"><strong>Tweet Count</strong></td>				
+				<td class="text_center"><strong>Actions</strong></td>
 			</tr>		
 
 			{% for c in data %}
 				<tr>
 					<td>{{c.name}}</td>
-					<td>{{c.count}}</td>					
-					<td>
+					<td class="text_center">{{c.count}}</td>					
+					<td class="text_center">
 						<ul class="inline">
 							<li><a href="/twitore/collection/{{c.name}}">edit</a></li>
 							<li><a href="/twitore/search/{{c.name}}">fire search</a></li>
@@ -27,6 +26,9 @@
 			{% endfor %}
 
 		</table>
+		
+		<!-- <p><a href="/twitore/create_collection">Create Collection</a></p> -->
+		<p><a href="/twitore/create_collection"><button class="button-primary" type="button">Create Collection</button></a></p>
 
 	</div>
 </div>
