@@ -212,10 +212,24 @@ def collection_tweets(name,page=1):
 		"collection":c
 	}
 
-	pt = models.MongoTweet.objects.filter(twitore_collection=name).order_by('-id').paginate(page=page, per_page=10)
+	pt = models.MongoTweet.objects.filter(twitore_collection=name).order_by('-id').paginate(page=page, per_page=25)
 
 	return render_template('tweets.html', data=data, pt=pt)	
 
+
+# search
+# @app.route("/{prefix}/collection/<name>/tweets/<int:page>".format(prefix=localConfig.twitore_app_prefix), methods=['GET', 'POST'])
+# def collection_tweets(name,page=1):
+
+# 	c = models.Collection.objects.get(name=name)
+
+# 	data = {
+# 		"collection":c
+# 	}
+
+# 	pt = models.MongoTweet.objects.filter(twitore_collection=name).order_by('-id').paginate(page=page, per_page=10)
+
+# 	return render_template('tweets.html', data=data, pt=pt)	
 
 
 
