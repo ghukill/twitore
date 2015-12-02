@@ -36,11 +36,15 @@ def collections():
 	data = []
 	collections = models.Collection.objects()
 
-	for collection in collections:		
+	'''
+	This needs to be paginated
+	'''
+	for collection in collections:
 		s = models.MongoTweet.objects().filter(twitore_collection=collection.name)
 		data.append({
 			"count":s.count(),
-			"name":collection.name			
+			"name":collection.name,
+			'minute_frequency':collection.minute_frequency			
 		})
 
 	logging.debug(mycron.user)
@@ -135,14 +139,24 @@ def update_collection(name):
 	logging.debug("updated collection %s" % c.id)
 
 	# update cron job
-	# try:
 	job = mycron.find_comment('twitore_{name}'.format(name=name))
 	job = list(job)
 	logging.debug(job)
 
 	# update cron
+	'''
+	Consider improving the logic here
+	'''
 	if len(job) > 0:
-		utils.updateCron(mycron,job[0],c)
+		if c.minute_frequency == 0:
+			utils.deleteCron(mycron, job[0], c)
+		elif c.minute_frequency >= 1 and c.minute_frequency <= 59:
+			utils.updateCron(mycron,job[0],c)
+		else:
+			logging.warning('frequency must be between 1-59 minutes. aborting.')
+			utils.setMsg(session,"collection could not be updated. frequency must be between 1-59 minutes. aborted.","msg_alert")
+			return redirect("/{prefix}/collection/{name}".format(prefix=localConfig.twitore_app_prefix,name=name))
+	
 	# set cron if not there
 	else:
 		# set cron job
@@ -150,10 +164,6 @@ def update_collection(name):
 
 	# set msg in session		
 	utils.setMsg(session,"collection updated","msg_success")
-
-	# except:
-	# 	# set msg in session		
-	# 	utils.setMsg(session,"collection could not be updated","msg_alert")
 
 	return redirect("/{prefix}/collection/{name}".format(prefix=localConfig.twitore_app_prefix,name=name))
 	
@@ -178,11 +188,10 @@ def delete_collection(name):
 	'''	
 
 	# remove from crontab
-	cron = list(mycron.find_comment('twitore_%s' % name))
-	logging.debug(cron)
-	if len(cron) == 1:
-		mycron.remove(cron[0])
-		mycron.write()
+	job = list(mycron.find_comment('twitore_%s' % name))
+	logging.debug(job)
+	if len(job) == 1:
+		utils.deleteCron(mycron, job[0], c)		
 	else:
 		logging.debug('could not find cron to delete')
 

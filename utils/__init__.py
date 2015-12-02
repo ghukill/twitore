@@ -150,15 +150,18 @@ def setMsg(session, msg_text, msg_type):
 # set cron job
 def setCron(mycron, collection):
 	logging.info("setting cron for %s" % collection.name)
-
 	job = mycron.new(comment="twitore_%s" % collection.name, command="curl localhost:%s/%s/search/%s" % (localConfig.twitore_app_port,localConfig.twitore_app_prefix, collection.name) )
 	job.minute.every(collection.minute_frequency)
 	mycron.write()
-	logging.debug(mycron.crons)
 
 
-# set cron job
+# update cron job
 def updateCron(mycron, job, collection):
 	job.minute.every(collection.minute_frequency)
 	job.command = "curl localhost:%s/%s/search/%s" % (localConfig.twitore_app_port,localConfig.twitore_app_prefix, collection.name)
+	mycron.write()
+
+
+def deleteCron(mycron, job, collection):
+	mycron.remove(job)
 	mycron.write()

@@ -12,7 +12,8 @@
 		<form action="/twitore/update_collection/{{data.collection.name}}" method="POST">
 			<div class="row">				
 				<div class="six columns">
-					<label for="minute_frequency">Minute Frequency (0-59)</label>
+					<label for="minute_frequency">Minute Frequency</label>
+					<p style="margin:0px auto 0px auto;">valid minute frequencies are 1-59, set to 0 to suspend capture</p>
 					<input class="u-full-width" type="text" placeholder="30 (would run every 30 minutes)" id="minute_frequency" name="minute_frequency" value="{{data.collection.minute_frequency}}">
 				</div>
 			</div>

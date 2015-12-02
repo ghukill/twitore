@@ -8,14 +8,20 @@
 
 			<tr>
 				<td><strong>Collection Name</strong></td>
-				<td class="text_center"><strong>Tweet Count</strong></td>				
+				<td class="text_center"><strong>Tweet Count</strong></td>
+				<td class="text_center"><strong>Capture Frequency</strong></td>				
 				<td class="text_center"><strong>Actions</strong></td>
 			</tr>		
 
 			{% for c in data %}
 				<tr>
 					<td>{{c.name}}</td>
-					<td class="text_center">{{c.count}}</td>					
+					<td class="text_center">{{c.count}}</td>
+					{% if c.minute_frequency == 0 %}
+						<td class="text_center msg_alert">suspended</td>
+					{% else %}
+						<td class="text_center msg_success">{{c.minute_frequency}}</td>
+					{% endif %}
 					<td class="text_center">
 						<ul class="inline">
 							<li><a href="/twitore/collection/{{c.name}}">edit</a></li>
