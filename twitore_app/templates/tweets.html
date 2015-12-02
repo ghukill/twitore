@@ -25,19 +25,50 @@
 </div>
 
 <div class="row">
+	<div style="margin-bottom:20px;" class="twelve columns">
+		<button class="button-primary" type="button" onclick="$('.rt').fadeToggle();">Toggle Retweets</button>
+	</div>
+</div>
+
+<div class="row">
 	<div class="twelve columns">
 
 		<table class="u-full-width tweet_table">
 
 			{% for tweet in pt.items %}
-				<tr>				
-					<td class="text_center">
-						<a href="https://twitter.com/{{tweet.user.screen_name}}"><img src="{{tweet.user.profile_image_url_https}}"/></a>
-						<p class="name"><a href="https://twitter.com/{{tweet.user.screen_name}}">{{tweet.user.name}}</a></p>
-					</td>
-					<td><span class="tweet">{{tweet.text}}</span>  <a class="tweet_link" target="_blank" href="https://twitter.com/{{tweet.user.screen_name}}/status/{{tweet.id}}">tweet link</a></td>
-					<td class="text_center">{{tweet.created_at}}</td>
-				</tr>
+
+				<!-- if retweet -->
+				{% if tweet.retweeted_status is defined %}
+					<tr class="rt msg_alert">				
+						<td class="text_center">
+							<a href="https://twitter.com/{{tweet.user.screen_name}}"><img src="{{tweet.user.profile_image_url_https}}"/></a>
+							<p class="name"><a href="https://twitter.com/{{tweet.user.screen_name}}">{{tweet.user.name}}</a></p>
+						</td>
+						
+						<td>
+							<span class="tweet">{{tweet.text}}</span>  <a class="tweet_link" target="_blank" href="https://twitter.com/{{tweet.user.screen_name}}/status/{{tweet.id}}">tweet link</a> <a class="tweet_link" target="_blank" href="https://twitter.com/{{tweet.retweeted_status.user.screen_name}}/status/{{tweet.retweeted_status.id}}">original link</a>
+						</td>
+						
+						<td class="text_center">{{tweet.created_at}}</td>
+					</tr>
+
+				<!-- original tweet -->
+				{% else %}
+					<tr>				
+						<td class="text_center">
+							<a href="https://twitter.com/{{tweet.user.screen_name}}"><img src="{{tweet.user.profile_image_url_https}}"/></a>
+							<p class="name"><a href="https://twitter.com/{{tweet.user.screen_name}}">{{tweet.user.name}}</a></p>
+						</td>						
+						
+						<td>
+							<span class="tweet">{{tweet.text}}</span>  <a class="tweet_link" target="_blank" href="https://twitter.com/{{tweet.user.screen_name}}/status/{{tweet.id}}">tweet link</a>
+						</td>
+
+						<td class="text_center">{{tweet.created_at}}</td>
+					</tr>
+
+				{% endif %}
+
 			{% endfor %}
 
 		</table>
