@@ -29,6 +29,9 @@ app.config['MONGODB_SETTINGS'] = {
 }
 db = MongoEngine(app)
 
+# setup cache
+from flask.ext.cache import Cache
+cache = Cache(app,config={'CACHE_TYPE': 'simple'})
 
 # get handlers (should be last)
 import views

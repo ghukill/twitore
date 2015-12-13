@@ -11,7 +11,7 @@ from mongoengine import DoesNotExist
 # local
 import localConfig
 from localConfig import logging
-from twitore_app import app, models, mycron
+from twitore_app import app, models, mycron, cache
 import utils
 
 
@@ -28,6 +28,7 @@ def index():
 
 # collections view
 @app.route("/{prefix}/collections".format(prefix=localConfig.twitore_app_prefix), methods=['GET', 'POST'])
+@cache.cached(timeout=50)
 def collections():
 
 	# deal with message
