@@ -1,0 +1,33 @@
+{% include 'header.html' %}
+<!-- collection page -->
+
+<div class="row">
+	<div class="twelve columns">
+		<h4>{{data.collection.name}}</h4>
+	</div>
+</div>
+
+<div class="row">
+	<div class="twelve columns">
+		<form action="/twitore/update_collection/{{data.collection.name}}" method="POST">
+			<div class="row">				
+				<div class="six columns">
+					<label for="minute_frequency">Minute Frequency</label>
+					<p style="margin:0px auto 0px auto;">valid minute frequencies are 1-59, set to 0 to suspend capture</p>
+					<input class="u-full-width" type="text" placeholder="30 (would run every 30 minutes)" id="minute_frequency" name="minute_frequency" value="{{data.collection.minute_frequency}}">
+				</div>
+			</div>
+			<div class="row">
+				<div class="twelve columns">
+					<label for="search_terms">Search Terms</label>
+		  			<textarea class="u-full-width" id="search_terms" name="search_terms">{{data.collection.search_terms}}</textarea>
+				</div>
+			</div>
+			<input class="button-primary" type="submit" value="Submit">
+			<a href="/twitore/delete_collection/{{data.collection.name}}"><input class="button-primary" type="button" value="Delete!?"></a>
+		</form>
+	</div>
+</div>
+
+
+{% include 'footer.html' %}

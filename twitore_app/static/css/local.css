@@ -1,0 +1,97 @@
+/* local css */
+.container {
+	font-size:medium;
+}
+li {
+	margin-bottom:0px;
+}
+
+ul.inline {
+	list-style-type: none;
+	margin: 0px 0px 0px 15px;
+}
+
+.inline li {
+	display: inline;	
+}
+
+.inline li:before {
+	content: " | ";
+}
+
+.inline li:first-child:before {
+	content: none;
+}
+
+#nav_menu ul {
+	margin-left:0px;
+}
+
+#nav_menu {
+	margin-top:15px;
+}
+
+#title {
+	margin-bottom:0px;	
+}
+
+#title a {
+	text-decoration: none;
+	color: #222;
+}
+
+
+/* messages */
+#msg {
+	border-radius: 7px;
+	margin:15px 15px 15px 15px;
+	display: table; 
+}
+
+#msg_text {
+	display: table-cell; 
+  	vertical-align: middle; 
+  	text-align: center; 
+  	padding:10px;
+}
+
+.msg_success {
+	background-color: #C2E8C2;
+}
+.msg_alert {
+	background-color: #FFFFC5;
+}
+
+.margin-20 {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.pagination {
+	font-size:1.5em;
+	text-align: center;
+
+}
+
+.pagination a,span {
+	padding-left: 5px;
+}
+
+.pagination.top {
+	text-align:right;
+	padding-top:6px;
+
+}
+
+.text_center {
+	text-align: center;
+}
+
+.tweet_table .name {
+	margin-top:10px;
+	margin-bottom:0px;
+}
+
+.tweet_link {
+	color: rgb(202, 202, 202);
+}

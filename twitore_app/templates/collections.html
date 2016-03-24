@@ -1,0 +1,42 @@
+{% include 'header.html' %}
+
+<!-- collections -->
+<div class="row">
+	<div class="twelve columns">
+
+		<table class="u-full-width">
+
+			<tr>
+				<td><strong>Collection Name</strong></td>
+				<td class="text_center"><strong>Tweet Count</strong></td>
+				<td class="text_center"><strong>Capture Frequency</strong></td>				
+				<td class="text_center"><strong>Actions</strong></td>
+			</tr>		
+
+			{% for c in data %}
+				<tr>
+					<td>{{c.name}}</td>
+					<td class="text_center">{{c.count}}</td>
+					{% if c.minute_frequency == 0 %}
+						<td class="text_center msg_alert">suspended</td>
+					{% else %}
+						<td class="text_center msg_success">{{c.minute_frequency}}</td>
+					{% endif %}
+					<td class="text_center">
+						<ul class="inline">
+							<li><a href="/twitore/collection/{{c.name}}">edit</a></li>
+							<li><a href="/twitore/search/{{c.name}}">fire search</a></li>
+							<li><a href="/twitore/collection/{{c.name}}/tweets/1">tweets</a></li>
+						</ul>
+					</td>
+			{% endfor %}
+
+		</table>
+		
+		<!-- <p><a href="/twitore/create_collection">Create Collection</a></p> -->
+		<p><a href="/twitore/create_collection"><button class="button-primary" type="button">Create Collection</button></a></p>
+
+	</div>
+</div>
+
+{% include 'footer.html' %}

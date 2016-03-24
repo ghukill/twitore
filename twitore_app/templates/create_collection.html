@@ -1,0 +1,23 @@
+{% include 'header.html' %}
+
+<form action="/twitore/create_collection" method="POST">
+	<div class="row">
+		<div class="six columns">
+			<label for="name">Collection Name</label>
+			<input class="u-full-width" type="text" placeholder="my_sweet_collection" id="name" name="name">
+		</div>
+		<div class="six columns">
+			<label for="minute_frequency">Minute Frequency (0-59)</label>
+			<input class="u-full-width" type="text" placeholder="30 (would run every 30 minutes)" id="minute_frequency" name="minute_frequency">
+		</div>
+	</div>
+	<div class="row">
+		<div class="twelve columns">
+			<label for="search_terms">Message</label>
+  			<textarea class="u-full-width" placeholder="seattle, detroit, 'san francisco'" id="search_terms" name="search_terms"></textarea>
+		</div>
+	</div>
+	<input class="button-primary" type="submit" value="Submit">
+</form>
+
+{% include 'footer.html' %}	
